@@ -2,6 +2,7 @@
 
 Ruby bindings for JSLint using v8.
 
-== Usage
+See RDoc, online here:
 
-See rdoc
+http://rdoc.info/github/ngauthier/jslintrb-v8/master/JSLint
+
