@@ -1,0 +1,7 @@
+= JSLintRB-v8
+
+Ruby bindings for JSLint using v8.
+
+== Usage
+
+See rdoc
