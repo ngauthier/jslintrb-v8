@@ -16,6 +16,23 @@ require 'v8'
 # Pass options into the constructor:
 #
 #   JSLint.new(:undef => false, :sub => true)
+#
+# Here is an example rake task:
+#   require 'jslintrb-v8'
+#   task :jslint do
+#     jsl = JSLint.new(:undef => false, :strict => false, :nomen => false, :onevar => false, :newcap => false)
+#     errors = []
+#     Dir['javascript', '**', '*.js'].each do |f|
+#       e = jsl.check(File.read(f))
+#       errors << "\nIn [#{f}]:\n#{e}\n" if e
+#     end
+#     if errors.empty?
+#       puts "JSLinty-fresh!"
+#     else
+#       raise "JSLint Errors Found"
+#     end
+#   end
+#
 class JSLint
     # if ADsafe should be enforced
     attr_accessor :adsafe   
