@@ -20,15 +20,23 @@ require 'v8'
 # Here is an example rake task:
 #   require 'jslintrb-v8'
 #   task :jslint do
-#     jsl = JSLint.new(:undef => false, :strict => false, :nomen => false, :onevar => false, :newcap => false)
+#     jsl = JSLint.new(
+#       :undef  => false,
+#       :strict => false,
+#       :nomen  => false,
+#       :onevar => false,
+#       :newcap => false
+#     )
 #     errors = []
-#     Dir['javascript', '**', '*.js'].each do |f|
+#     path = File.join('javascripts', '**', '*.js')
+#     Dir[path].each do |f|
 #       e = jsl.check(File.read(f))
 #       errors << "\nIn [#{f}]:\n#{e}\n" if e
 #     end
 #     if errors.empty?
 #       puts "JSLinty-fresh!"
 #     else
+#       $stderr.write(errors.join("\n")+"\n");
 #       raise "JSLint Errors Found"
 #     end
 #   end
@@ -154,12 +162,9 @@ class JSLint
       context['JSLintRBwidget']   = @widget 
       context['JSLintRBreportErrors'] = lambda{|js_errors|
         js_errors.each do |e|
-          if V8::Object === e
-            e = V8::To.rb(e)
-            errors << "Error at line #{e['line'].to_i + 1} " + 
-              "character #{e['character'].to_i + 1}: #{e['reason']}"
-            errors << "  #{e['evidence']}"
-          end
+          errors << "Error at line #{e['line'].to_i + 1} " + 
+            "character #{e['character'].to_i + 1}: #{e['reason']}"
+          errors << "  #{e['evidence']}"
         end
       }
       context.eval %{
