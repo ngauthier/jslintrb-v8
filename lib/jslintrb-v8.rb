@@ -136,44 +136,18 @@ class JSLint
     @settings.merge!(opts);
 
     @settings.keys.each do |setting|
-      self.create_method(setting) { @settings[setting] }
-      self.create_method("#{setting}=") { |x| @settings[setting] = x }
+      self.class.send(:define_method, setting) { @settings[setting] }
+      self.class.send(:define_method, "#{setting}=") { |x| @settings[setting] = x }
     end
-  end
-
-  def create_method(name, &block)
-    self.class.send(:define_method, name, block)
   end
 
   def check(input)
     errors = []
-    linter = self.linter.upcase
 
     V8::Context.new do |context|
-      context.load(File.join(File.dirname(__FILE__), 'jslintrb-v8', self.linter.downcase + '.js'))
-
-      # prep the context object
-      @settings.each do |opt, val|
-        context["JSLintRB#{opt}"]  = val
-      end
-
-      context['JSLintRBinput'] = lambda { input }
-
-      context['JSLintRBerrors'] = lambda { |js_errors|
-        js_errors.each do |e|
-          errors << "Error at line #{e['line'].to_i + 1} " +
-            "character #{e['character'].to_i + 1}: #{e['reason']}"
-          errors << "  #{e['evidence']}"
-        end
-      }
-
-      # do it
-      context.eval [
-        "#{linter}(JSLintRBinput(), {",
-          @settings.keys.map { |k| "#{k} : JSLintRB#{k}" }.join(",\n"),
-        "});",
-        "JSLintRBerrors(#{linter}.errors);"
-      ].join("\n")
+      @context = context
+      load_linter
+      errors = lint(input)
     end
 
     if errors.empty?
@@ -182,4 +156,39 @@ class JSLint
       return errors.join("\n")
     end
   end
+
+  def load_linter
+    @context.load(File.join(File.dirname(__FILE__), 'jslintrb-v8', self.linter.downcase + '.js'))
+  end
+
+  def lint(input)
+    errors, linter = [], self.linter.upcase
+
+    @settings.each do |opt, val|
+      @context["JSLintRB#{opt}"]  = val
+    end
+
+    @context['JSLintRBinput'] = lambda { input }
+
+    @context['JSLintRBerrors'] = lambda { |js_errors|
+      js_errors.each do |e|
+        errors << "Error at line #{e['line'].to_i + 1} " +
+          "character #{e['character'].to_i + 1}: #{e['reason']}"
+        errors << "  #{e['evidence']}"
+      end
+    }
+
+    @context.eval [
+      "#{linter}(JSLintRBinput(), {",
+        @settings.keys.map { |k| "#{k} : JSLintRB#{k}" }.join(",\n"),
+      "});",
+      "JSLintRBerrors(#{linter}.errors);"
+    ].join("\n")
+
+    puts errors
+
+    return errors
+  end
+
+  private :load_linter, :lint
 end
