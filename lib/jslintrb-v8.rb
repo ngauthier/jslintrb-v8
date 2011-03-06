@@ -1,5 +1,5 @@
 require 'v8'
-# JSLint bindings for ruby using v8.
+# JSLint and JSHint bindings for ruby using v8.
 #
 # Usage:
 #
@@ -41,6 +41,16 @@ require 'v8'
 #     end
 #   end
 #
+# Using JSHint instead of JSLint
+#
+#   To use JSHint, a less restrictive linter that allows practices
+#   that are widely considered safe and idiomatic in JavaScript, pass
+#   'jshint' as the :linter option:
+#
+#       JSLint.new(:linter => 'jshint')
+#
+#   Note that additional options are available when using JSHint;
+#   for details, see http://jshint.com.
 class JSLint
   def initialize(opts = {})
     # default jslint settings
@@ -110,6 +120,7 @@ class JSLint
     }
 
     if opts[:linter] == 'jshint'
+      # default jshint settings
       jshint_settings = {
         # tolerate automatic semicolon insertion
         :asi      => false,

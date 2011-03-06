@@ -1,6 +1,6 @@
 = JSLintRB-v8
 
-Ruby bindings for JSLint using v8.
+Ruby bindings for JSLint and JSHint using v8.
 
 See RDoc, online here:
 
