@@ -109,7 +109,7 @@ class JSLint
       :widget     => false
     }
 
-    if @settings[:linter] == 'jshint'
+    if opts[:linter] == 'jshint'
       jshint_settings = {
         # tolerate automatic semicolon insertion
         :asi      => false,
