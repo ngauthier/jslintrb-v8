@@ -103,6 +103,15 @@ class JSLint
 
     # override default settings with passed in options
     @settings.merge(opts);
+
+    @settings.keys.each do |setting|
+      self.create_method(setting) { @settings[setting] }
+      self.create_method("#{setting}=") { |x| @settings[setting] = x }
+    end
+  end
+
+  def create_method(name, &block)
+    self.class.send(:define_method, name, block)
   end
 
   def check(input)
