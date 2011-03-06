@@ -185,8 +185,6 @@ class JSLint
       "JSLintRBerrors(#{linter}.errors);"
     ].join("\n")
 
-    puts errors
-
     return errors
   end
 
