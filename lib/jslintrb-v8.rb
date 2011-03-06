@@ -45,6 +45,14 @@ class JSLint
   def initialize(opts = {})
     # default jslint settings
     @settings = {
+      # by default, use JSLint as linter;
+      # optionally, you can use JSHint
+      # by passing 'jshint' instead
+      #
+      # for more information, see
+      # http://jshint.com
+      :linter     => 'jslint',
+
       # if ADsafe should be enforced
       :adsafe     => false,
       # if bitwise operators should not be allowed
@@ -71,7 +79,7 @@ class JSLint
       :laxbreak   => false,
       # if constructor names must be capitalized
       :newcap     => true,
-      # if names shoudl be checked
+      # disallow initial or trailing underscores in names
       :nomen      => true,
       # if HTML event handlers should be allowed
       :on         => false,
@@ -101,8 +109,31 @@ class JSLint
       :widget     => false
     }
 
+    if @settings[:linter].eql?'jshint'
+      jshint_settings = {
+        # tolerate automatic semicolon insertion
+        :asi      => false,
+        # allow the use of advanced (and potentially unsafe)
+        # techniques like foo == null or assignments inside
+        # structured elements such as if, for and while
+        :boss     => false,
+        # require curly braces around logical blocks
+        :curly    => true,
+        # allow logging functions that should be removed for production
+        :devel    => false,
+        # prohibit use of arguments.caller and arguments.callee
+        :noarg    => true,
+        # prohibit empty blocks
+        :noempty  => true,
+        # prohibit construction using "new"
+        :nonew    => false
+      }
+
+      @settings.merge!(jshint_settings)
+    end
+
     # override default settings with passed in options
-    @settings.merge(opts);
+    @settings.merge!(opts);
 
     @settings.keys.each do |setting|
       self.create_method(setting) { @settings[setting] }
@@ -116,9 +147,10 @@ class JSLint
 
   def check(input)
     errors = []
+    linter = self.linter.upcase
 
     V8::Context.new do |context|
-      context.load(File.join(File.dirname(__FILE__), 'jslintrb-v8', 'jslint.js'))
+      context.load(File.join(File.dirname(__FILE__), 'jslintrb-v8', self.linter.downcase + '.js'))
 
       # prep the context object
       @settings.each do |opt, val|
@@ -137,10 +169,10 @@ class JSLint
 
       # do it
       context.eval [
-        "JSLINT(JSLintRBinput(), {",
+        "#{linter}(JSLintRBinput(), {",
           @settings.keys.map { |k| "#{k} : JSLintRB#{k}" }.join(",\n"),
         "});",
-        "JSLintRBerrors(JSLINT.errors);"
+        "JSLintRBerrors(#{linter}.errors);"
       ].join("\n")
     end
 
