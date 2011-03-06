@@ -138,7 +138,7 @@ class JSLint
       # do it
       context.eval [
         "JSLINT(JSLintRBinput(), {",
-          @settings.map { |k,v| "#{k} : JSLintRB#{k}" }.join(",\n"),
+          @settings.keys.map { |k| "#{k} : JSLintRB#{k}" }.join(",\n"),
         "});",
         "JSLintRBerrors(JSLINT.errors);"
       ].join("\n")
