@@ -1,8 +1,3 @@
-= JSLintRB-v8
+= JSHintRB
 
-Ruby bindings for JSLint and JSHint using v8.
-
-See RDoc, online here:
-
-http://rdoc.info/github/ngauthier/jslintrb-v8/master/JSLint
-
+Ruby bindings for JSHint using v8.
