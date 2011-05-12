@@ -3,7 +3,7 @@ require 'v8'
 #
 # Usage:
 #
-#    require 'jslintrb-v8'
+#    require 'jshintrb'
 #    puts JSLint.new.check("var x = 5")
 #
 # will output:
@@ -18,7 +18,7 @@ require 'v8'
 #   JSLint.new(:undef => false, :sub => true)
 #
 # Here is an example rake task:
-#   require 'jslintrb-v8'
+#   require 'jshintrb'
 #   task :jslint do
 #     jsl = JSLint.new(
 #       :undef  => false,
@@ -55,13 +55,7 @@ class JSLint
   def initialize(opts = {})
     # default jslint settings
     @settings = {
-      # by default, use JSLint as linter;
-      # optionally, you can use JSHint
-      # by passing 'jshint' instead
-      #
-      # for more information, see
-      # http://jshint.com
-      :linter     => 'jslint',
+      :linter     => 'jshint',
 
       # if ADsafe should be enforced
       :adsafe     => false,
@@ -169,7 +163,7 @@ class JSLint
   end
 
   def load_linter
-    @context.load(File.join(File.dirname(__FILE__), 'jslintrb-v8', self.linter.downcase + '.js'))
+    @context.load(File.join(File.dirname(__FILE__), 'jshint', self.linter.downcase + '.js'))
   end
 
   def lint(input)
