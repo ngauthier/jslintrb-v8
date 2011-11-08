@@ -162,6 +162,7 @@ class JSLint
       context['JSLintRBwidget']   = @widget 
       context['JSLintRBreportErrors'] = lambda{|js_errors|
         js_errors.each do |e|
+          next if e.nil?
           errors << "Error at line #{e['line'].to_i + 1} " + 
             "character #{e['character'].to_i + 1}: #{e['reason']}"
           errors << "  #{e['evidence']}"

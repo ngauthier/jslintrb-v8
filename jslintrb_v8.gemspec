@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "jslintrb_v8"
-  s.version = "1.0.2"
+  s.version = "1.0.3"
   s.platform = Gem::Platform::RUBY
   s.author = "Nick Gauthier"
   s.email = "ngauthier@gmail.com"
@@ -10,5 +10,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir['lib/**/*'] + ['README.rdoc']
   
-  s.add_dependency('therubyracer', '0.8.1')
+  s.add_dependency('therubyracer', '~> 0.9.8')
 end
