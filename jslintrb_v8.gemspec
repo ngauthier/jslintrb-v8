@@ -10,5 +10,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir['lib/**/*'] + ['README.rdoc']
   
-  s.add_dependency('therubyracer', '~> 0.9.8')
+  s.add_dependency('therubyracer', '~> 0.11.0')
 end

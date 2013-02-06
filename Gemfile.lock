@@ -1,0 +1,20 @@
+PATH
+  remote: .
+  specs:
+    jslintrb_v8 (1.0.3)
+      therubyracer (~> 0.11.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    libv8 (3.11.8.13)
+    ref (1.0.2)
+    therubyracer (0.11.3)
+      libv8 (~> 3.11.8.12)
+      ref
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  jslintrb_v8!

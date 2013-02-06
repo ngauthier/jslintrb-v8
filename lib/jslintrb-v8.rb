@@ -128,11 +128,10 @@ class JSLint
   end
 
   def check(input)
-    errors = []
     V8::Context.new do |context|
       context.load(File.join(File.dirname(__FILE__), 'jslintrb-v8', 'jslint.js'))
 
-      context['JSLintRBinput']    = lambda{ input }
+      context['JSLintRBinput']    = input
       context['JSLintRBadsafe']   = @adsafe
       context['JSLintRBbitwise']  = @bitwise 
       context['JSLintRBbrowser']  = @browser 
@@ -160,16 +159,8 @@ class JSLint
       context['JSLintRBsub']      = @sub 
       context['JSLintRBwhite']    = @white 
       context['JSLintRBwidget']   = @widget 
-      context['JSLintRBreportErrors'] = lambda{|js_errors|
-        js_errors.each do |e|
-          next if e.nil?
-          errors << "Error at line #{e['line'].to_i + 1} " + 
-            "character #{e['character'].to_i + 1}: #{e['reason']}"
-          errors << "  #{e['evidence']}"
-        end
-      }
       context.eval %{
-        JSLINT(JSLintRBinput(), {
+        JSLINT(JSLintRBinput, {
           adsafe   : JSLintRBadsafe,
           bitwise  : JSLintRBbitwise,
           browser  : JSLintRBbrowser,
@@ -198,14 +189,19 @@ class JSLint
           white    : JSLintRBwhite,
           widget   : JSLintRBwidget
         });
-        JSLintRBreportErrors(JSLINT.errors);
       }
+      errors = context['JSLINT'].errors.inject("") do |output, error|
+        output += "Error at line #{error['line'].to_i + 1} " + 
+            "character #{error['character'].to_i + 1}: #{error['reason']}\n" +
+            "  #{error['evidence']}"
+        output
+      end
+      if errors.empty?
+        return nil
+      else
+        return errors
+      end
     end
 
-    if errors.empty?
-      return nil
-    else
-      return errors.join("\n")
-    end
   end
 end
