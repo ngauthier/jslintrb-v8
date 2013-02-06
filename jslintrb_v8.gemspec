@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "jslintrb_v8"
-  s.version = "1.0.3"
+  s.version = "1.0.4"
   s.platform = Gem::Platform::RUBY
   s.author = "Nick Gauthier"
   s.email = "ngauthier@gmail.com"
